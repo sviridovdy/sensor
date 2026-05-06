@@ -1,0 +1,17 @@
+[Unit]
+Description=Bluetooth Presence Sensor
+After=bluetooth.target network.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/sensor
+ExecStart=/opt/sensor/venv/bin/python main.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
