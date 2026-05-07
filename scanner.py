@@ -11,12 +11,12 @@ async def _ble_scan(duration: float) -> tuple[set[str], dict[str, str]]:
     Passive BLE scan.
     Returns (set of MACs, dict mapping advertised-name -> MAC) — both uppercased.
     """
-    devices = await BleakScanner.discover(timeout=duration)
-    macs = {d.address.upper() for d in devices}
-    names = {d.name: d.address.upper() for d in devices if d.name}
+    discovered = await BleakScanner.discover(timeout=duration, return_adv=True)
+    macs = {addr.upper() for addr in discovered}
+    names = {d.name: addr.upper() for addr, (d, _) in discovered.items() if d.name}
     logger.info(f"BLE scan: {len(macs)} device(s), {len(names)} with names")
-    for d in devices:
-        logger.info(f"  {d.address.upper()}  name={d.name!r}  rssi={d.rssi}")
+    for addr, (d, adv) in discovered.items():
+        logger.info(f"  {addr.upper()}  name={d.name!r}  rssi={adv.rssi}")
     return macs, names
 
 
