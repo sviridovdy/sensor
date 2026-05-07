@@ -1,6 +1,5 @@
 bluetooth:
   scan_interval: 60      # seconds between scan cycles
-  scan_duration: 10       # seconds to actively scan per cycle
   miss_threshold: 5      # consecutive missed scans before marking device as away
 
 devices:
@@ -8,10 +7,6 @@ devices:
     mac: "AA:BB:CC:DD:EE:FF"
   - name: "Bob Pixel"
     mac: "11:22:33:44:55:66"
-    # Android randomizes BLE MAC addresses, so add the phone's advertised BLE
-    # name as a fallback. Find it by running with LOG_LEVEL=DEBUG and looking
-    # for "BLE scan:" log lines, or check Settings > About phone > Device name.
-    ble_name: "Bob's Pixel 8"
 
 automations:
   # "anyone_home" fires when the house transitions between occupied and empty

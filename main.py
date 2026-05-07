@@ -36,7 +36,6 @@ def load_config(path: str = "config.yaml") -> dict:
 async def run(config: dict):
     bt = config.get("bluetooth", {})
     scan_interval: int = bt.get("scan_interval", 30)
-    scan_duration: float = bt.get("scan_duration", 8)
     miss_threshold: int = bt.get("miss_threshold", 3)
 
     devices: list[dict] = config.get("devices", [])
@@ -49,10 +48,7 @@ async def run(config: dict):
 
     names = [d["name"] for d in devices]
     logger.info(f"Watching {len(devices)} device(s): {names}")
-    logger.info(
-        f"Scan every {scan_interval}s "
-        f"(active for {scan_duration}s, away after {miss_threshold} misses)"
-    )
+    logger.info(f"Scan every {scan_interval}s, away after {miss_threshold} misses")
 
     stop_event = asyncio.Event()
 
@@ -68,7 +64,7 @@ async def run(config: dict):
         async with aiohttp.ClientSession() as session:
             while not stop_event.is_set():
                 try:
-                    seen = await scan_devices(devices, scan_duration)
+                    seen = await scan_devices(devices)
                     events = tracker.update(seen)
                     for event in events:
                         await runner.handle_event(event, session)
