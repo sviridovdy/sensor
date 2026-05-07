@@ -14,7 +14,9 @@ async def _ble_scan(duration: float) -> tuple[set[str], dict[str, str]]:
     devices = await BleakScanner.discover(timeout=duration)
     macs = {d.address.upper() for d in devices}
     names = {d.name: d.address.upper() for d in devices if d.name}
-    logger.debug(f"BLE scan: {len(macs)} device(s), {len(names)} with names")
+    logger.info(f"BLE scan: {len(macs)} device(s), {len(names)} with names")
+    for d in devices:
+        logger.info(f"  {d.address.upper()}  name={d.name!r}  rssi={d.rssi}")
     return macs, names
 
 
