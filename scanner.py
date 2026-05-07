@@ -77,27 +77,29 @@ async def scan_devices(devices: list[dict], scan_duration: float) -> set[str]:
 
         if mac in ble_macs:
             present.add(mac)
-            logger.debug(f"{label}: found via BLE MAC")
+            logger.info(f"{label}: found via BLE MAC")
             continue
 
         ble_name = device.get("ble_name") or device["name"]
         if ble_name in ble_names:
             present.add(mac)
-            logger.debug(f"{label}: found via BLE name '{ble_name}'")
+            logger.info(f"{label}: found via BLE name '{ble_name}'")
             continue
+
+        logger.info(f"{label}: not in BLE scan, trying classic BT")
 
         found = await loop.run_in_executor(None, _hcitool_name, mac)
         if found:
             present.add(mac)
-            logger.debug(f"{label}: found via hcitool name lookup")
+            logger.info(f"{label}: found via hcitool name lookup")
             continue
 
         found = await loop.run_in_executor(None, _l2ping, mac)
         if found:
             present.add(mac)
-            logger.debug(f"{label}: found via l2ping")
+            logger.info(f"{label}: found via l2ping")
             continue
 
-        logger.debug(f"{label}: not seen")
+        logger.info(f"{label}: not seen")
 
     return present
